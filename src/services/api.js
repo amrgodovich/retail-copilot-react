@@ -10,7 +10,7 @@ const API_BASE = "https://retail-analytics-copilot-production.up.railway.app";
 }
 
 export async function askCopilot(session_id, question) {
-  const API_BASE = "retail-analytics-copilot-production.up.railway.app";
+const API_BASE = "https://retail-analytics-copilot-production.up.railway.app";
   const res = await fetch(`${API_BASE}/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
