@@ -16,6 +16,7 @@ export default function ChatContainer({ sessionId = null, onData = () => {} }) {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const [history, setHistory] = useState("");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -37,41 +38,54 @@ const handleSend = async () => {
   setIsLoading(true);
 
   try {
-    const res = await askCopilot(sessionId, input);
-    if (res.error) {
-      console.error("askCopilot error:", res.error);
-      setIsLoading(false);
-      return;
-    }
-    
+  const res = await askCopilot(sessionId, input);
+
+  if (res.error) {
     const assistantMsg = {
       role: "assistant",
-      content: res.final_answer || res.answer || "(no answer)",
+      content: ` Error: ${res.error}`,
       timestamp: new Date().toLocaleTimeString(),
     };
-    setMessages((prev) => [...prev, assistantMsg]);
-    
-    // Transform citations from strings to objects with text
-    const citationsWithText = (res.citations || []).map(citationRef => {
-      const [filename, chunkId] = citationRef.split("::");
-      const chunk = res.rag_chunks?.find(c => c.id === chunkId);
-      return {
-        filename: chunk?.filename || filename,
-        text: chunk?.text || "Citation text not found"
-      };
-    });
-    
-    onData({
-      sql: res.sql_query || "",
-      mode: res.mode || "",
-      citations: citationsWithText,
-      explanation: res.explanation || (res.explain ? res.explain : ""),
-    });
-  } catch (err) {
-    console.error(err);
-  } finally {
+    setMessages(prev => [...prev, assistantMsg]);
     setIsLoading(false);
+    return;
   }
+
+  // update loader text immediately
+  setHistory(res.history || "");
+
+  const assistantMsg = {
+    role: "assistant",
+    content: res.final_answer || res.answer || "(no answer)",
+    timestamp: new Date().toLocaleTimeString(),
+  };
+  setMessages(prev => [...prev, assistantMsg]);
+
+  // citations
+  const citationsWithText = (res.citations || []).map(citationRef => {
+    const [filename, chunkId] = citationRef.split("::");
+    const chunk = res.rag_chunks?.find(c => c.id === chunkId);
+    return {
+      filename: chunk?.filename || filename,
+      text: chunk?.text || "Table from the Database",
+    };
+  });
+
+  onData({
+    sql: res.sql_query || "",
+    mode: res.mode || "",
+    citations: citationsWithText,
+    explanation: res.explanation || res.explain || "",
+    history: res.history || "",
+  });
+
+} catch (err) {
+  console.error(err);
+} finally {
+  setIsLoading(false);
+}
+
+  setHistory(res.history || "");
 };
 
   return (
@@ -94,6 +108,13 @@ const handleSend = async () => {
         {messages.map((msg, idx) => (
           <ChatMessage key={idx} message={msg} />
         ))}
+        {isLoading && (<div className="flex justify-start mb-4">
+            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
+              <div className="flex gap-2">
+                <div className="italic text-gray-400">{history}</div>
+              </div>
+            </div>
+            </div>)}
         {isLoading && (
           <div className="flex justify-start mb-4">
             <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
@@ -103,8 +124,9 @@ const handleSend = async () => {
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
               </div>
             </div>
-          </div>
-        )}
+            </div>
+        )
+        }
         <div ref={messagesEndRef} />
       </div>
 

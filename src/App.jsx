@@ -12,6 +12,7 @@ export default function App() {
     citations: [],
     explanation: "",
     mode: "",
+    history: "",
   });
 
   const [sessionId, setSessionId] = useState(null);
