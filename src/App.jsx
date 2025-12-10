@@ -4,11 +4,13 @@ import SidebarContainer from "./components/Sidebar/SidebarContainer";
 import ApiKeyModal from "./components/Auth/ApiKeyModal";
 import { setKey } from "./services/api";
 
+
+
 export default function App() {
   const [sidebarData, setSidebarData] = useState({
     sql: "",
     citations: [],
-    explain: "",
+    explanation: "",
   });
 
   const [sessionId, setSessionId] = useState(null);
@@ -39,14 +41,14 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <div className="w-2/5 flex">
-        <ChatContainer sessionId={sessionId} onData={setSidebarData} />
-      </div>
-
+      <ChatContainer
+        sessionId={sessionId}
+        onData={setSidebarData}
+      />
       <SidebarContainer
         sql={sidebarData.sql}
         citations={sidebarData.citations}
-        explain={sidebarData.explain}
+        explanation={sidebarData.explanation}
       />
     </div>
   );

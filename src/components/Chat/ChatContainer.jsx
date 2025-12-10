@@ -9,7 +9,7 @@ export default function ChatContainer({ sessionId = null, onData = () => {} }) {
     {
       role: "assistant",
       content:
-        "Hello! I'm your Retail Analytics Copilot. Ask me anything about your sales data, inventory, customer behavior, or market trends.",
+        "Hello! I'm your Retail Analytics Copilot. Ask me anything about your data.",
       timestamp: new Date().toLocaleTimeString(),
     },
   ]);
@@ -25,51 +25,56 @@ export default function ChatContainer({ sessionId = null, onData = () => {} }) {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+const handleSend = async () => {
+  if (!input.trim() || isLoading) return;
+  const userMsg = {
+    role: "user",
+    content: input,
+    timestamp: new Date().toLocaleTimeString(),
+  };
+  setMessages((prev) => [...prev, userMsg]);
+  setInput("");
+  setIsLoading(true);
 
-    const userMsg = {
-      role: "user",
-      content: input,
+  try {
+    const res = await askCopilot(sessionId, input);
+    if (res.error) {
+      console.error("askCopilot error:", res.error);
+      setIsLoading(false);
+      return;
+    }
+    
+    const assistantMsg = {
+      role: "assistant",
+      content: res.final_answer || res.answer || "(no answer)",
       timestamp: new Date().toLocaleTimeString(),
     };
-
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
-    setIsLoading(true);
-
-    // call backend API
-    try {
-      const res = await askCopilot(sessionId, input);
-
-      if (res.error) {
-        console.error("askCopilot error:", res.error);
-        setIsLoading(false);
-        return;
-      }
-
-      const assistantMsg = {
-        role: "assistant",
-        content: res.final_answer || res.answer || "(no answer)",
-        timestamp: new Date().toLocaleTimeString(),
+    setMessages((prev) => [...prev, assistantMsg]);
+    
+    // Transform citations from strings to objects with text
+    const citationsWithText = (res.citations || []).map(citationRef => {
+      const [filename, chunkId] = citationRef.split("::");
+      const chunk = res.rag_chunks?.find(c => c.id === chunkId);
+      return {
+        filename: chunk?.filename || filename,
+        text: chunk?.text || "Citation text not found"
       };
-
-      setMessages((prev) => [...prev, assistantMsg]);
-
-      onData({
-        sql: res.sql_query || "",
-        citations: res.citations || [],
-        explanation: res.explanation || (res.explain ? res.explain : []),
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    });
+    
+    onData({
+      sql: res.sql_query || "",
+      citations: citationsWithText,
+      explanation: res.explanation || (res.explain ? res.explain : ""),
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="w-2/5 flex flex-col">
       {/* Header */}
       <div className="bg-white border-b px-6 py-4">
         <div className="flex items-center gap-3">
