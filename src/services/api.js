@@ -1,6 +1,5 @@
 export async function setKey(api_key) {
-const API_BASE = "https://retail-analytics-copilot-production.up.railway.app";
-  const res = await fetch(`${API_BASE}/set_key`, {
+  const res = await fetch("http://localhost:8000/set_key", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ api_key }),
@@ -10,8 +9,7 @@ const API_BASE = "https://retail-analytics-copilot-production.up.railway.app";
 }
 
 export async function askCopilot(session_id, question) {
-const API_BASE = "https://retail-analytics-copilot-production.up.railway.app";
-  const res = await fetch(`${API_BASE}/ask`, {
+  const res = await fetch("http://localhost:8000/ask", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ session_id, question }),
