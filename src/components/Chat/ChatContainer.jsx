@@ -63,6 +63,7 @@ const handleSend = async () => {
     
     onData({
       sql: res.sql_query || "",
+      mode: res.mode || "",
       citations: citationsWithText,
       explanation: res.explanation || (res.explain ? res.explain : ""),
     });

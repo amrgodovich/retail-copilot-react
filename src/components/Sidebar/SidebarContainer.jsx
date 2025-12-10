@@ -1,9 +1,10 @@
 import SQLDisplay from "./SQLDisplay";
 import CitationPanel from "./CitationPanel";
 import ExplainationPanel from "./ExplainationPanel";
+import ModePanel from "./ModePanel";
 import { BarChart3 } from "lucide-react";
 
-export default function SidebarContainer({ sql, citations, explanation }) {
+export default function SidebarContainer({ mode, sql, citations, explanation }) {
   const hasContent = sql || (citations && citations.length > 0) || explanation;
 
   return (
@@ -11,6 +12,7 @@ export default function SidebarContainer({ sql, citations, explanation }) {
       <div className="p-6">
         <h2 className="text-lg font-bold mb-4">Analysis Details</h2>
 
+        {mode && <ModePanel mode={mode} />}
         {explanation && <ExplainationPanel Explainations={[explanation]} />}
         {citations?.length > 0 && <CitationPanel citations={citations} />}
         {sql && <SQLDisplay sql={sql} />}

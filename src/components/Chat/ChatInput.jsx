@@ -15,7 +15,7 @@ export default function ChatInput({ value, onChange, onSend, isLoading }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Ask about sales trends, inventory, customer behavior..."
+          placeholder="Ask a question about your data..."
           className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
           rows="2"
         />

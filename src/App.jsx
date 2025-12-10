@@ -11,6 +11,7 @@ export default function App() {
     sql: "",
     citations: [],
     explanation: "",
+    mode: "",
   });
 
   const [sessionId, setSessionId] = useState(null);
@@ -49,6 +50,7 @@ export default function App() {
         sql={sidebarData.sql}
         citations={sidebarData.citations}
         explanation={sidebarData.explanation}
+        mode={sidebarData.mode}
       />
     </div>
   );
