@@ -104,33 +104,32 @@ const handleSend = async () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
-        {messages.map((msg, idx) => (
-          <ChatMessage key={idx} message={msg} />
-        ))}
-        {isLoading && (<div className="flex justify-start mb-4">
-            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
-              <div className="flex gap-2">
-                <div className="italic text-gray-400">{history}</div>
-              </div>
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          {messages.map((msg, idx) => (
+            <ChatMessage key={idx} message={msg} />
+          ))}
+          {isLoading && history && (
+            <div className="flex justify-start mb-4">
+          <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
+            <div className="italic text-gray-400 text-sm">{history}</div>
+          </div>
             </div>
-            </div>)}
-        {isLoading && (
-          <div className="flex justify-start mb-4">
-            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
-              <div className="flex gap-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
-              </div>
+          )}
+          {isLoading && (
+            <div className="flex justify-start mb-4">
+          <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
+            <div className="flex gap-2">
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
             </div>
+          </div>
             </div>
-        )
-        }
-        <div ref={messagesEndRef} />
-      </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-      {/* Input */}
+        {/* Input */}
       <ChatInput value={input} onChange={setInput} onSend={handleSend} isLoading={isLoading} />
     </div>
   );
