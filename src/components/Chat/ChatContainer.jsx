@@ -85,7 +85,6 @@ const handleSend = async () => {
   setIsLoading(false);
 }
 
-  setHistory(res.history || "");
 };
 
   return (
