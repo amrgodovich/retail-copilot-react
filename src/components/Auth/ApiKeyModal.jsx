@@ -13,7 +13,7 @@ export default function ApiKeyModal({ onSubmit }) {
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-3">Enter Your API Key</h2>
         <p className="text-sm text-gray-600 mb-3">
-          Your key is required to initialize the Retail Analytics Copilot.
+          Enter Any Free Gemini API key to initialize the Retail Analytics Copilot.
         </p>
 
         <input
